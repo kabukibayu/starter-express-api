@@ -1,10 +1,12 @@
 const express = require('express')
-const { createResponse } = require('./utils/response');
+const { createResponse } = require('./src/utils/response');
 const app = express()
-app.all('/', (req, res) => {
-    console.log("Just got a request!")
-    createResponse(res, 200, { message: {
-        "Suhu" : "PANAS CUK"
-    }})
-})
+
+const deviceRouter = require('./src/routes/device');
+const telemetryRouter = require('./src/routes/telemetry');
+
+app.use(express.json());
+app.use('/device', deviceRouter);
+app.use('/telemetry', telemetryRouter);
+
 app.listen(process.env.PORT || 3000)
