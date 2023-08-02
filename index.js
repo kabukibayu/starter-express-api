@@ -2,6 +2,8 @@ const express = require('express')
 const { createResponse } = require('./src/utils/response');
 const app = express()
 
+
+
 const deviceRouter = require('./src/routes/device');
 const telemetryRouter = require('./src/routes/telemetry');
 

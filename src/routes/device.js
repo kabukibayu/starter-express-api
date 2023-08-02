@@ -10,7 +10,7 @@ postRouter.post('/create', async (req, res) => {
         if (deviceName == undefined || deviceName == null || deviceName == '') return createResponse(res, 400, 'Device name cant be empty');
         const token = generateToken(32);
         await db.query(`
-            INSERT INTO "Device" ("Name", "Token")
+            INSERT INTO "device" ("name", "token")
             VALUES ('${deviceName}', '${token}')
         `).then(() => {
             return createResponse(res, 200, { message: 'Post successful' });
@@ -28,7 +28,7 @@ postRouter.post('/create', async (req, res) => {
 postRouter.get('/get', async (req, res) => {
     try {
         await db.query(`
-            SELECT "ID", "Name", "Token", "Created", "LatestUpdated"
+            SELECT "id", "name", "token", "created", "latestupdated"
             FROM "Device";`
             ).then((query) => {
                 console.log(query.rows);
