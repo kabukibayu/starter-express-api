@@ -34,9 +34,13 @@ client.on('error', function (error) {
 });
 
 client.on('message', function (topic, message) {
-    console.log('Received message on topic:', topic, 'with payload:', message.toString());
+  console.log('Message received:', message.toString());
+  
+  const parsedData = JSON.parse(message.toString());
+
+  mqttLogger(parsedData);
   });
   
-client.subscribe('coba');
+client.subscribe('telemetry/post');
 
 app.listen(process.env.PORT || 3000)
