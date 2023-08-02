@@ -1,5 +1,4 @@
 const express = require('express')
-const mosca = require('mosca');
 const {mqttLogger} =require('./src/routes/mqttLogger');
 const app = express()
 
@@ -9,29 +8,35 @@ const telemetryRouter = require('./src/routes/telemetry');
 app.use(express.json());
 app.use('/device', deviceRouter);
 app.use('/telemetry', telemetryRouter);
+console.log('test')
 
-// MQTT broker settings
-const settings = {
-    port: 1883, // MQTT broker port
-  };
+// For Node.js environment
+var mqtt = require('mqtt')
+
+var options = {
+    host: '6b946a781fc1457b9987f4d75283ecf2.s2.eu.hivemq.cloud',
+    port: 8883,
+    protocol: 'mqtts',
+    username: 'jarex',
+    password: '12345678'
+}
+
+var client = mqtt.connect(options);
   
-  const mqttBroker = new mosca.Server(settings);
+  client.on('connect', () => {
+    console.log('Connected')
+  })
+  console.log('test2')
   
-  mqttBroker.on('ready', () => {
-    console.log('MQTT broker is up and running');
+
+client.on('error', function (error) {
+  console.error('Connection failed:', error);
+});
+
+client.on('message', function (topic, message) {
+    console.log('Received message on topic:', topic, 'with payload:', message.toString());
   });
   
-  mqttBroker.on('clientConnected', (client) => {
-    console.log(`Client connected: ${client.id}`);
-  });
-  
-  mqttBroker.on('published', (packet) => {
-    console.log('Message received:', packet.payload.toString());
-  
-    const parsedData = JSON.parse(packet.payload.toString());
-  
-    mqttLogger(parsedData);
-  
-  });
+client.subscribe('coba');
 
 app.listen(process.env.PORT || 3000)
