@@ -29,7 +29,7 @@ postRouter.get('/get', async (req, res) => {
     try {
         await db.query(`
             SELECT "id", "name", "token", "created", "latestupdated"
-            FROM "Device";`
+            FROM "device";`
             ).then((query) => {
                 console.log(query.rows);
             return createResponse(res, 200, { message: {
