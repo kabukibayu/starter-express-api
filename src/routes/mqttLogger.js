@@ -61,9 +61,7 @@ async function logData(deviceID, TelemetryName, telemetryValue) {
   
 
 const mqttLogger = async (parsedData) => {
-  
   for (const key in parsedData) {
-   
     if (key === "data" && typeof parsedData[key] === "object") {
       for (const nestedKey in parsedData[key]){
          console.log(`key ${nestedKey}: ${parsedData[key][nestedKey]}`);

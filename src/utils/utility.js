@@ -1,4 +1,7 @@
+
 const crypto = require('crypto');
+const bcrypt  = require('bcrypt');
+
 
 const generateToken = (length) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -17,4 +20,14 @@ const isUUID = (input)=>  {
     return uuidRegex.test(input);
   }
 
-module.exports = {generateToken, isUUID}
+async function hashPassword(password) {
+    const saltRounds = 12; 
+    return bcrypt.hash(password, saltRounds);
+  }
+  
+
+async function comparePassword(password, hash) {
+    return bcrypt.compare(password, hash);
+}
+
+module.exports = {generateToken, isUUID, hashPassword, comparePassword}

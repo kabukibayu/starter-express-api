@@ -1,29 +1,36 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+CREATE TABLE "user" (
+	"id" UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
+	"username" VARCHAR NOT NULL,
+	"password" VARCHAR NOT NULL,
+	"token" VARCHAR
+);
+
 CREATE TABLE "device" (
-	"id" UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
-	"name" VARCHAR NOT NULL,
-	"token" VARCHAR NOT NULL,
-	"created" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-	"latestupdated" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+	"ID" UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
+	"Name" VARCHAR NOT NULL,
+	"Token" VARCHAR NOT NULL,
+	"Created" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	"LatestUpdated" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE "telemetry" (
-	"id" UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
-	"deviceid" UUID NOT NULL,
-	"name" VARCHAR NOT NULL,
-	"created" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-	"latestupdated" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-	CONSTRAINT "uniquedata" UNIQUE ("deviceid", "name")
+CREATE TABLE "Telemetry" (
+	"ID" UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
+	"DeviceID" UUID NOT NULL,
+	"Name" VARCHAR NOT NULL,
+	"Created" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	"LatestUpdated" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	CONSTRAINT "uniquedata" UNIQUE ("DeviceID", "Name")
 );
 
-CREATE TABLE "telemetryhistory" (
-  "id" UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
-  "telemetryid" UUID NOT NULL,
-  "value" VARCHAR NOT NULL,
-  "date" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+CREATE TABLE "TelemetryHistory" (
+  "ID" UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
+  "TelemetryID" UUID NOT NULL,
+  "Value" VARCHAR NOT NULL,
+  "Date" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-ALTER TABLE "telemetry" ADD FOREIGN KEY ("deviceid") REFERENCES "device" ("id");
+ALTER TABLE "Telemetry" ADD FOREIGN KEY ("DeviceID") REFERENCES "Device" ("ID");
 
-ALTER TABLE "telemetryhistory" ADD FOREIGN KEY ("telemetryid") REFERENCES "telemetry" ("id");
+ALTER TABLE "TelemetryHistory" ADD FOREIGN KEY ("TelemetryID") REFERENCES "Telemetry" ("ID");

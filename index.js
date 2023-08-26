@@ -1,44 +1,29 @@
-const express = require('express')
-const {mqttLogger} =require('./src/routes/mqttLogger');
-const app = express()
+const express = require("express");
+const app = express();
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+require("dotenv").config();
 
-const deviceRouter = require('./src/routes/device');
-const telemetryRouter = require('./src/routes/telemetry');
+const deviceRouter = require("./src/routes/device");
+const telemetryRouter = require("./src/routes/telemetry");
+const userRouter = require("./src/routes/user");
+const tokenRouter = require("./src/routes/token");
+const { validateJwtToken } = require("./src/utils/middleware");
 
 app.use(express.json());
-app.use('/device', deviceRouter);
-app.use('/telemetry', telemetryRouter);
+app.use(cookieParser());
 
-// For Node.js environment
-var mqtt = require('mqtt')
+const corsOptions = {
+  origin: ["http://localhost:3000", "https://das-himace.vercel.app"],
+  credentials: true,
+};
 
-var options = {
-    host: '6b946a781fc1457b9987f4d75283ecf2.s2.eu.hivemq.cloud',
-    port: 8883,
-    protocol: 'mqtts',
-    username: 'jarex',
-    password: '12345678'
-}
+app.use(cors(corsOptions));
+app.use("/device", validateJwtToken, deviceRouter);
+app.use("/telemetry", validateJwtToken, telemetryRouter);
+app.use("/user", userRouter);
+app.use("/refresh-token", tokenRouter);
 
-var client = mqtt.connect(options);
-  
-  client.on('connect', () => {
-    console.log('Connected')
-  })
-  
-
-client.on('error', function (error) {
-  console.error('Connection failed:', error);
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Server is listening on port ${process.env.PORT || 3000}`);
 });
-
-client.on('message', function (topic, message) {
-  console.log('Message received:', message.toString());
-  
-  const parsedData = JSON.parse(message.toString());
-
-  mqttLogger(parsedData);
-  });
-  
-client.subscribe('telemetry/post');
-
-app.listen(process.env.PORT || 3000)
